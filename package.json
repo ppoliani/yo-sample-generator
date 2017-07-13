@@ -1,0 +1,20 @@
+{
+  "name": "fe",
+  "version": "1.0.0",
+  "description": "A sample generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "author": "Pavlos Polianidis <ppoliani@gmail.com>",
+  "license": "ISC",
+  "file": [
+    "generators"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^1.1.1"
+  }
+}
