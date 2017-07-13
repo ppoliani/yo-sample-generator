@@ -1,6 +1,6 @@
 const Generator = require('yeoman-generator');
 
-class FEGenerator extends Generator {
+module.exports = class extends Generator {
   constructor(args, opts) {
     super(args, opts);
 
@@ -14,7 +14,4 @@ class FEGenerator extends Generator {
   method2() {
     this.log('method 2 run');
   }
-};
-
-
-module.exports = Generator;
+}
