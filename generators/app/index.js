@@ -5,7 +5,7 @@ module.exports = class extends Generator {
   constructor(args, opts) {
     super(args, opts);
 
-    this.option('babel')
+    this.option('babel');
   }
 
   prompting() {
@@ -20,16 +20,9 @@ module.exports = class extends Generator {
   }
 
   clone() {
-    try {
-      this.log('Cloning the project...');
-      this.spawnCommandSync('git', ['clone', 'git@gitlab.com:ppoliani/react-redux-boilerplate.git', `${this._projectName}`]);
-      this.log('Project cloned successfully');
-    }
-    catch(error) {
-      this._clean(error);
-    }
+    this.spawnCommandSync('git', ['clone', 'git@gitlab.com:ppoliani/react-redux-boilerplate.git', `${this._projectName}`]);
+    this.log('Project cloned successfully');
   }
-
 
   writing() {
     this.log('Copying templates...');
@@ -41,33 +34,36 @@ module.exports = class extends Generator {
   }
 
   install() {
-    this.destinationRoot(`./${this._projectName}`);
     this.log('Installing dependencies...');
-    this.installDependencies({
-      npm: true,
-      bower: false,
-      callback: err => {
-        if(err) return this._clean(err);
-        this.log('Dependencies installed successuflly');
-      }
+    this.destinationRoot(`./${this._projectName}`);
+    const command = this.spawnCommand('npm', ['install', '--registry http://nexus.sandbox.extranet.group/nexus/content/groups/npm-master']);
+    this._gitInit();
+
+    command.on('close', err => {
+      this._clean(err);
     });
   }
 
-  gitInit() {
-    this.log('Git init...');
-    rimraf(`./${this._projectName}/.git`, error => {
+  _gitInit() {
+    this.log('Removing old .git...');
+    rimraf(`.git`, error => {
       if(error) return this._clean(error);
-      this.spawnCommandSync('git', ['init', `${this._projectName}`]);
+      this.log('Old .git removed');
+      this.log('Git init...');
+      this.spawnCommandSync('git', ['init']);
+      this._gitInitialCommit();
     })
   }
 
-  end() {
-    this.log('Finished!');
+  _gitInitialCommit() {
+    this.log('Git initial commit...');
+    this.spawnCommandSync('git', ['add', '.']);
+    this.spawnCommandSync('git', ['commit', '-am', 'Initial Commit']);
   }
 
   _clean(err) {
-    this.log('Cleaning directory...');
-    rimraf(`${this._projectName}`, error => {
+    this.log(`Cleaning directory...`);
+    rimraf(`../${this._projectName}`, error => {
       if(error) throw err;
       this.log('Clean Succeeded...');
     });
